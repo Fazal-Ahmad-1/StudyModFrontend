@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMOD | Neon Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header>
+            <h1 class="logo">Study<span class="highlight-pink">MOD</span></h1>
+        </header>
+
+        <div id="auth-view" class="view-section">
+            <div class="card param-3d">
+                <h2 id="auth-title">System Access</h2>
+                <form id="auth-form">
+                    <div class="input-group">
+                        <input type="text" id="username" placeholder="Username" required autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                    <div id="auth-error" class="error-text hidden"></div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" id="btn-toggle-reg" class="btn btn-secondary">Switch to Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="dashboard-view" class="view-section hidden">
+            
+            <nav class="navbar">
+                <div class="user-display">OPERATOR: <span id="display-username" class="highlight-blue">UNK</span></div>
+                <div class="nav-controls">
+                    <button id="nav-study" class="btn btn-small active">Control</button>
+                    <button id="nav-analytics" class="btn btn-small btn-secondary">Analytics</button>
+                    <button id="nav-logout" class="btn btn-small btn-danger">Disconnect</button>
+                </div>
+            </nav>
+
+            <div id="tab-study" class="tab-content">
+                <div class="grid-layout">
+                    <div class="card param-3d" style="text-align: center; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="text-align: left;">
+                          <h2>System Core</h2>
+                             <p id="pet-status-text" style="color: #888; font-size: 0.8rem;">STATUS: ANALYZING...</p>
+                         </div>
+    
+                     <div class="pet-container">
+                      <div id="cyber-pet" class="orb"></div>
+                      <div class="orb-ring"></div>
+                     </div>
+                    </div>
+                    
+                    <div class="card param-3d" id="main-control-card" >
+                        <h2>Session Protocol</h2>
+                        
+                        <div id="session-setup">
+                            <div class="input-group">
+                                <input type="text" id="subject" placeholder="Target Subject">
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="tag" placeholder="Tag (e.g., Exam Prep)">
+                            </div>
+                            <button id="btn-start" class="btn btn-primary full-width">Initiate Sequence</button>
+                        </div>
+
+                        <div id="session-active" class="hidden">
+                            <h3 id="active-subject" class="highlight-pink">PHYSICS</h3>
+                            <div id="timer-display" class="digital-timer">00:00:00</div>
+                            <p class="tag-display">MODE: <span id="active-tag">FOCUS</span></p>
+                            <div class="zen-controls" style="margin-bottom: 15px; text-align: center;">
+                                <button id="btn-zen-mode" class="btn btn-secondary btn-small">
+                                    ⛶ ENTER ZEN MODE
+                                </button>
+                           </div>
+                            <button id="btn-stop" class="btn btn-danger full-width">Terminate Sequence</button>
+                        </div>
+                    </div>
+
+                    <div class="card param-3d">
+                        <h2>Audio Environment</h2>
+                        <div id="sound-grid" class="sound-grid">
+                            <p class="loading-text">Loading Audio Assets...</p>
+                        </div>
+                        <div id="now-playing" class="status-text hidden">Active: <span id="sound-name">None</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-analytics" class="tab-content hidden">
+                <div class="grid-layout">
+                    
+                    <div class="card param-3d">
+                        <h2>Weekly Metrics</h2>
+                        <div class="stat-row">
+                            <span>Total Duration</span>
+                            <span id="stat-total" class="highlight-blue">0 mins</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Daily Average</span>
+                            <span id="stat-avg" class="highlight-pink">0.0 mins</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Peak Productivity</span>
+                            <span id="stat-peak" class="highlight-green">N/A</span>
+                        </div>
+                    </div>
+
+                    <div class="card param-3d">
+                      <h2>Top Focus Areas</h2>
+                       <div id="top-subjects-list" class="subject-list">
+                          <p class="loading-text">Analyzing Data...</p>
+                       </div>
+                    </div>
+
+                    <div class="card param-3d">
+                        <h2>AI Neural Insight</h2>
+                        <div id="ai-loading" class="hidden blink">Analyzing Neural Patterns...</div>
+                        <div id="ai-content">
+                            <p id="ai-summary" class="ai-text">-- No Data --</p>
+                            <div id="ai-actions" class="action-list"></div>
+                        </div>
+                        <button id="btn-refresh-ai" class="btn btn-secondary full-width" style="margin-top: 15px;">Refresh Analysis</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="visualizer-container">
+        <canvas id="visualizer-canvas"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

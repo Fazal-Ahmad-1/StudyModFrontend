@@ -1,0 +1,490 @@
+:root {
+    --bg-dark: #050505;
+    --bg-panel: #121212;
+    --neon-blue: #00f3ff;
+    --neon-pink: #ff00ff;
+    --neon-green: #00ff41;
+    --neon-red: #ff3333;
+    --text-main: #e0e0e0;
+    --font-head: 'Orbitron', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: var(--font-mono);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    
+    /* THE GRID DEFINITION */
+    background-image: 
+      linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    
+    /* Size of one grid square */
+    background-size: 40px 40px;
+    
+    min-height: 100vh;
+    
+    /* --- NEW ANIMATION LINE --- */
+    /* 3s = speed (lower is faster), linear = smooth speed */
+    animation: grid-scroll 3s linear infinite;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Typography */
+h1, h2, h3 { font-family: var(--font-head); text-transform: uppercase; margin: 0; }
+.logo { font-size: 3rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 15px var(--neon-blue); color: var(--neon-blue); }
+.highlight-pink { color: var(--neon-pink); }
+.highlight-blue { color: var(--neon-blue); }
+.highlight-green { color: var(--neon-green); }
+
+/* Utility */
+.hidden { display: none !important; }
+.full-width { width: 100%; }
+.blink { animation: blinker 1.5s linear infinite; color: var(--neon-green); }
+@keyframes blinker { 50% { opacity: 0; } }
+
+/* Cards (3D Effect) */
+.card {
+    background: var(--bg-panel);
+    border: 1px solid var(--neon-blue);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    box-shadow: 
+        0 0 5px var(--neon-blue),
+        inset 0 0 20px rgba(0, 243, 255, 0.05);
+    transition: transform 0.2s;
+}
+
+.card h2 {
+    color: var(--neon-pink);
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+/* Inputs */
+.input-group { margin-bottom: 1.5rem; }
+input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #333;
+    color: #fff;
+    padding: 12px;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    transition: 0.3s;
+}
+input:focus {
+    outline: none;
+    border-bottom-color: var(--neon-blue);
+    box-shadow: 0 10px 10px -10px var(--neon-blue);
+}
+
+/* Buttons (3D Retro Style) */
+.btn {
+    background: #000;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 12px 24px;
+    font-family: var(--font-head);
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: 0.1s;
+    box-shadow: 4px 4px 0px var(--neon-blue); /* Hard shadow for 3D */
+    margin-right: 10px;
+}
+.btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--neon-blue); }
+.btn:active { transform: translate(4px, 4px); box-shadow: none; }
+
+.btn-secondary { border-color: var(--neon-pink); color: var(--neon-pink); box-shadow: 4px 4px 0px var(--neon-pink); }
+.btn-secondary:hover { box-shadow: 2px 2px 0px var(--neon-pink); }
+.btn-secondary:active { box-shadow: none; }
+
+.btn-danger { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 4px 4px 0px var(--neon-red); }
+.btn-danger:hover { box-shadow: 2px 2px 0px var(--neon-red); }
+
+.btn-small { padding: 8px 16px; font-size: 0.8rem; box-shadow: 2px 2px 0px var(--neon-blue); }
+
+/* Dashboard Layout */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Timer */
+.digital-timer {
+    font-family: var(--font-head);
+    font-size: 4rem;
+    color: var(--neon-green);
+    text-align: center;
+    margin: 20px 0;
+    text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+    border: 1px solid #333;
+    background: rgba(0,0,0,0.3);
+}
+.tag-display { text-align: center; color: #888; margin-bottom: 20px; }
+
+/* Sound Grid */
+.sound-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+.sound-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    padding: 10px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: 0.3s;
+}
+.sound-btn:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+.sound-btn.active {
+    background: var(--neon-blue);
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 15px var(--neon-blue);
+    border-color: var(--neon-blue);
+}
+.status-text { text-align: center; margin-top: 15px; color: var(--neon-blue); font-size: 0.9rem; }
+
+/* Analytics */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #222;
+}
+.ai-text { font-style: italic; color: #ccc; line-height: 1.6; }
+.action-list div {
+    margin: 8px 0;
+    padding-left: 15px;
+    border-left: 2px solid var(--neon-pink);
+}
+
+/* Subject List Styles */
+.subject-row {
+    margin-bottom: 15px;
+}
+.subj-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+.subj-rank { color: var(--neon-pink); font-weight: bold; margin-right: 10px; }
+.subj-name { flex-grow: 1; color: #fff; }
+.subj-mins { color: var(--neon-blue); }
+
+.progress-bg {
+    width: 100%;
+    height: 6px;
+    background: #222;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+    box-shadow: 0 0 10px var(--neon-blue);
+    transition: width 1s ease-in-out;
+}
+.text-muted { color: #666; font-style: italic; text-align: center; }
+
+/* --- 3D Visualizer Styles --- */
+/* --- 3D Visualizer Styles (Final Fix) --- */
+/* style.css */
+
+.visualizer-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;       /* Forces 100% of Viewport Width */
+    height: 350px;      /* Height of the bars */
+    z-index: -1;        /* Behind everything else */
+    pointer-events: none; /* Let clicks pass through */
+    overflow: hidden;   /* Hide scrollbars */
+    perspective: 1000px; /* 3D Depth */
+}
+
+#visualizer-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    
+    /* 3D Tilt */
+    transform: rotateX(50deg) scale(1.1);
+    transform-origin: bottom center;
+    
+    /* Fade out the top */
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 60%);
+}
+
+/* Add this to style.css */
+.error-text {
+    color: #ff3333; /* Neon Red */
+    background: rgba(255, 51, 51, 0.1);
+    border: 1px solid #ff3333;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Optional: Shake animation for wrong password */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+/* Define the movement animation */
+@keyframes grid-scroll {
+    0% { 
+        background-position: 0 0; 
+    }
+    100% { 
+        /* Must match background-size (40px) for seamless loop */
+        background-position: 40px 40px; 
+    }
+}
+
+/* Optional: Define a pulsing brightness animation */
+@keyframes grid-pulse {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+    100% { filter: brightness(1); }
+}
+
+/* --- ZEN MODE STYLES --- */
+
+/* 1. Hide distractions */
+body.zen-active header,
+body.zen-active .navbar,
+body.zen-active .card:not(#main-control-card), /* Hide other cards (Analytics, Sounds) */
+body.zen-active #session-setup,
+body.zen-active h2 { /* Hide the card title "Session Protocol" */
+    display: none !important;
+}
+
+/* 2. Style the Main Card for Zen */
+body.zen-active #main-control-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Dead Center */
+    
+    width: 100%;
+    max-width: 800px;
+    background: transparent; /* Remove background */
+    border: none;            /* Remove border */
+    box-shadow: none;        /* Remove shadow */
+    z-index: 100;
+}
+
+/* 3. Make Timer HUGE */
+body.zen-active #timer-display {
+    font-size: 8rem; /* Giant text */
+    background: transparent;
+    border: none;
+    text-shadow: 
+        0 0 20px var(--neon-green),
+        0 0 40px var(--neon-green);
+    margin: 0;
+}
+
+body.zen-active #active-subject {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--neon-pink);
+}
+
+body.zen-active .tag-display {
+    font-size: 1.2rem;
+    letter-spacing: 5px;
+    opacity: 0.8;
+}
+
+/* 4. Adjust Controls Position */
+body.zen-active .zen-controls {
+    opacity: 0.3; /* Dim the buttons so they don't distract */
+    transition: 0.3s;
+}
+body.zen-active .zen-controls:hover {
+    opacity: 1;
+}
+
+/* Hide the big red Stop button in Zen Mode? 
+   Optional: Keep it or hide it. Usually good to keep it or make it smaller.
+   Let's keep it but make it minimal. */
+body.zen-active #btn-stop {
+    background: transparent;
+    border: 1px solid #ff3333;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+    margin-top: 20px;
+}
+
+/* FORCE TIMER VISIBILITY IN ZEN MODE */
+body.zen-active #timer-display {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    /* Ensure it's on top of everything */
+    position: relative; 
+    z-index: 9999;
+    
+    /* styling to ensure it stands out */
+    color: var(--neon-green);
+    text-shadow: 0 0 30px var(--neon-green);
+}
+
+/* Ensure the container itself is visible */
+body.zen-active #session-active {
+    display: block !important;
+}
+
+/* --- ZEN MODE: BLUE TIMER --- */
+body.zen-active #timer-display {
+    color: var(--neon-blue) !important;
+    text-shadow: 
+        0 0 10px var(--neon-blue),
+        0 0 40px var(--neon-blue),
+        0 0 80px var(--neon-blue) !important;
+    
+    /* Make it even bigger for impact */
+    font-size: 9rem;
+    margin-top: 0;
+}
+
+/* Optional: Make the subject name pink to contrast with the blue timer */
+body.zen-active #active-subject {
+    color: var(--neon-pink) !important;
+    text-shadow: 0 0 20px var(--neon-pink) !important;
+}
+
+
+
+
+
+/* --- CYBER PET STYLES --- */
+
+.pet-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* The Core Orb */
+.orb {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    position: relative;
+    z-index: 2;
+    transition: 0.5s;
+}
+
+/* The Spinning Ring */
+.orb-ring {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid transparent;
+    border-top-color: currentColor; /* Inherits color from parent */
+    border-bottom-color: currentColor;
+    border-radius: 50%;
+    animation: spin 4s linear infinite;
+    z-index: 1;
+    opacity: 0.5;
+}
+
+/* --- ANIMATION STATES --- */
+
+/* 1. STABLE (Blue/Green - Default) */
+.pet-stable .orb {
+    background: var(--neon-blue);
+    box-shadow: 0 0 20px var(--neon-blue), 0 0 60px var(--neon-blue);
+    animation: breathe 4s ease-in-out infinite;
+}
+.pet-stable .orb-ring { color: var(--neon-blue); }
+
+/* 2. HYPER (Pink - High Productivity) */
+.pet-hyper .orb {
+    background: var(--neon-pink);
+    box-shadow: 0 0 30px var(--neon-pink), 0 0 80px var(--neon-pink);
+    animation: bounce 0.5s infinite alternate; /* Fast energy! */
+}
+.pet-hyper .orb-ring { 
+    color: var(--neon-pink); 
+    animation: spin 1s linear infinite; /* Fast spin */
+}
+
+/* 3. CRITICAL (Red - Inactive/Glitch) */
+.pet-critical .orb {
+    background: #ff3333;
+    box-shadow: 0 0 10px #ff3333;
+    animation: glitch-anim 2s infinite; /* Glitchy flicker */
+}
+.pet-critical .orb-ring {
+    color: #ff3333;
+    border-style: dashed;
+}
+
+/* --- KEYFRAMES --- */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}
+
+@keyframes glitch-anim {
+    0% { opacity: 1; transform: translate(0); }
+    10% { opacity: 0.8; transform: translate(-2px, 2px); }
+    20% { opacity: 1; transform: translate(2px, -2px); }
+    30% { opacity: 0.1; } /* Flicker out */
+    40% { opacity: 1; }
+    100% { opacity: 1; }
+}
