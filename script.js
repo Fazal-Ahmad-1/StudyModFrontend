@@ -1,6 +1,8 @@
 // --- Configuration ---
-const API_BASE = "http://localhost:8080/api";
-const MEDIA_BASE = "http://localhost:8080"; // For MP3 files
+const BACKEND_URL = "https://studymod.onrender.com"; 
+
+const API_BASE = BACKEND_URL + "/api"; 
+const MEDIA_BASE = BACKEND_URL
 
 // --- State ---
 let currentUser = null;
@@ -549,4 +551,5 @@ async function loadCyberPet() {
     } catch (err) {
         console.error("Pet System Failure:", err);
     }
+
 }
