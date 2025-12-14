@@ -1,5 +1,6 @@
 // --- Configuration ---
 const BACKEND_URL = "https://studymod.onrender.com"; 
+// const BACKEND_URL = "http://localhost:8080"; 
 
 const API_BASE = BACKEND_URL + "/api"; 
 const MEDIA_BASE = BACKEND_URL
@@ -18,6 +19,10 @@ let analyser = null;
 let dataArray = null;
 let canvas, ctx;
 let isVisualizerActive = false;
+
+//Random pet actions
+let petActionInterval = null;
+const PET_ACTIONS = ['action-wink', 'action-scan', 'action-jump', 'action-surprise'];
 
 // --- DOM Elements ---
 const views = {
@@ -114,6 +119,8 @@ function enterDashboard() {
     document.getElementById('display-username').textContent = currentUser.username.toUpperCase();
     loadSounds();
     loadCyberPet();
+    initPetRandomActions();
+    initPetEyeTracking();
 }
 
 document.getElementById('nav-logout').addEventListener('click', () => {
@@ -210,7 +217,7 @@ async function startSession() {
     const subject = document.getElementById('subject').value;
     const tag = document.getElementById('tag').value;
 
-    // 1. Check if we are logged in
+    // --- 1. Validation ---
     if (!currentUser || !currentUser.id) {
         alert("System Error: User ID not found. Please re-login.");
         return;
@@ -218,8 +225,45 @@ async function startSession() {
 
     if (!subject) { alert("Subject required"); return; }
 
+    // --- 2. Ghost Mode Logic (New) ---
+    // We add a safety check (?.value) in case the dropdown doesn't exist in your HTML yet
+    const ghostSelect = document.getElementById('ghost-mode-select');
+    const ghostMode = ghostSelect ? ghostSelect.value : "NONE";
+    
+    // Reset Ghost State
+    ghostDuration = 0;
+    isGhostActive = false;
+    const ghostContainer = document.getElementById('ghost-container');
+    if(ghostContainer) ghostContainer.classList.add('hidden');
+
+    if (ghostMode !== "NONE" && ghostMode) {
+        try {
+            const res = await fetch(`${API_BASE}/analytics/ghost/${currentUser.id}?mode=${ghostMode}`);
+            if(res.ok) {
+                const duration = await res.json(); // returns seconds
+                
+                if (duration > 0) {
+                    ghostDuration = duration;
+                    isGhostActive = true;
+                    
+                    // UI Setup
+                    if(ghostContainer) {
+                        ghostContainer.classList.remove('hidden');
+                        document.getElementById('ghost-bar').style.width = "0%";
+                        document.getElementById('player-bar').style.width = "0%";
+                        document.getElementById('ghost-status').textContent = `TARGET: ${Math.floor(duration/60)} MINS`;
+                        document.getElementById('ghost-status').style.color = "#888";
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Ghost Load Failed", err);
+        }
+    }
+
+    // --- 3. Start Actual Session (Original Logic) ---
     try {
-        console.log("Sending Request...", { subject, tag, userId: currentUser.id }); // Debug Log
+        console.log("Sending Request...", { subject, tag, userId: currentUser.id }); 
 
         const res = await fetch(`${API_BASE}/sessions/start?id=${currentUser.id}`, {
             method: 'POST',
@@ -227,7 +271,6 @@ async function startSession() {
             body: JSON.stringify({ subject, tag })
         });
 
-        // 2. Read the error text from the server if request fails
         if (!res.ok) {
             const errorText = await res.text();
             throw new Error(errorText || "Server refused connection");
@@ -241,10 +284,11 @@ async function startSession() {
         document.getElementById('active-subject').textContent = activeSession.subject.toUpperCase();
         document.getElementById('active-tag').textContent = activeSession.tag || "GENERAL";
         
-        // Start Timer
+        // --- 4. Start Timer ---
         secondsElapsed = 0;
-        updateTimerDisplay();
+        updateTimerDisplay(); // Initial call
         if (timerInterval) clearInterval(timerInterval); // Clear existing just in case
+        
         timerInterval = setInterval(() => {
             secondsElapsed++;
             updateTimerDisplay();
@@ -252,7 +296,6 @@ async function startSession() {
 
     } catch (err) {
         console.error("Start Session Error:", err);
-        // 3. Show the exact reason (e.g., "You already have an active session!")
         alert("Failed: " + err.message);
     }
 }
@@ -368,8 +411,6 @@ async function loadAiInsights() {
         loadingEl.classList.remove('blink');
     }
 }
-
-// --- Visualizer Logic ---
 
 // --- Visualizer Logic (Final Fix) ---
 
@@ -551,5 +592,132 @@ async function loadCyberPet() {
     } catch (err) {
         console.error("Pet System Failure:", err);
     }
+}
+function initPetRandomActions() {
+    // Clear existing interval if any
+    if (petActionInterval) clearInterval(petActionInterval);
 
+    // Run a random check every 8 seconds
+    petActionInterval = setInterval(() => {
+        // 30% chance to perform an action (so it doesn't happen constantly)
+        if (Math.random() > 0.7) {
+            triggerRandomAction();
+        }
+    }, 8000);
+}
+
+function triggerRandomAction() {
+    const petContainer = document.querySelector('.pet-container');
+    const statusText = document.getElementById('pet-status-text');
+    
+    // Don't interrupt if critical (glitching)
+    if (petContainer.classList.contains('pet-critical')) return;
+
+    // 1. Pick a random action
+    const randomAction = PET_ACTIONS[Math.floor(Math.random() * PET_ACTIONS.length)];
+    
+    // 2. Apply class
+    petContainer.classList.add(randomAction);
+
+    // 3. Optional: Briefly change text
+    const originalText = statusText.textContent;
+    const originalColor = statusText.style.color;
+    
+    if (randomAction === 'action-scan') {
+        statusText.textContent = "STATUS: SCANNING USER...";
+        statusText.style.color = "var(--neon-blue)";
+    } else if (randomAction === 'action-surprise') {
+        statusText.textContent = "STATUS: DATA SPIKE DETECTED!";
+        statusText.style.color = "#fff";
+    }
+
+    // 4. Remove after animation finishes (1.5 seconds)
+    setTimeout(() => {
+        petContainer.classList.remove(randomAction);
+        // Restore text
+        statusText.textContent = originalText;
+        statusText.style.color = originalColor;
+    }, 1500);
+}
+
+// File: script.js
+
+// Add to state variables
+let ghostDuration = 0; // in seconds
+let isGhostActive = false;
+
+
+// 2. Update updateTimerDisplay() to handle the race logic
+function updateTimerDisplay() {
+    // --- 1. CALCULATE TIME & UPDATE TEXT (This part was missing) ---
+    const hrs = Math.floor(secondsElapsed / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((secondsElapsed % 3600) / 60).toString().padStart(2, '0');
+    const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+    
+    // Update the HTML text
+    const displayElement = document.getElementById('timer-display');
+    if (displayElement) {
+        displayElement.textContent = `${hrs}:${mins}:${secs}`;
+    }
+
+    // Ghost Logic
+    if (isGhostActive && ghostDuration > 0) {
+        // Calculate percentages (capped at 100%)
+        // The "Ghost" moves at a constant "100% per ghostDuration" pace.
+        // But wait! A ghost implies replaying a past session.
+        // Simplified: The Ghost completes the bar in 'ghostDuration' seconds.
+        // You complete the bar in 'ghostDuration' seconds.
+        
+        const progressPercent = Math.min((secondsElapsed / ghostDuration) * 100, 100);
+        
+        // Update Bars
+        // For visual clarity: Let the "bar" represent the target duration.
+        // So both fill up towards 100%.
+        document.getElementById('player-bar').style.width = `${progressPercent}%`;
+        
+        // Visual Feedback
+        const statusEl = document.getElementById('ghost-status');
+        const playerBar = document.getElementById('player-bar');
+
+        if (secondsElapsed < ghostDuration) {
+            // Still chasing
+            statusEl.textContent = "CHASING GHOST...";
+            playerBar.style.backgroundColor = "var(--neon-blue)";
+        } else {
+            // You beat the ghost!
+            statusEl.textContent = "GHOST DEFEATED (NEW RECORD)";
+            statusEl.style.color = "var(--neon-green)";
+            playerBar.style.backgroundColor = "var(--neon-green)";
+            
+            // Optional: Make the bar glow
+            playerBar.style.boxShadow = "0 0 15px var(--neon-green)";
+        }
+    }
+}
+function initPetEyeTracking() {
+    const petBody = document.getElementById('cyber-pet');
+
+    document.addEventListener('mousemove', (e) => {
+        // Only run if the pet exists and is visible
+        if (!petBody || petBody.offsetParent === null) return;
+
+        // 1. Get Pet's Position on Screen
+        const rect = petBody.getBoundingClientRect();
+        const petCenterX = rect.left + rect.width / 2;
+        const petCenterY = rect.top + rect.height / 2;
+
+        // 2. Calculate Distance from Mouse to Pet Center
+        const deltaX = e.clientX - petCenterX;
+        const deltaY = e.clientY - petCenterY;
+
+        // 3. Limit the movement (The "Pupil" Logic)
+        // We divide by 15 to slow down the movement so eyes don't fly off the face
+        // We clamp Math.max/min so it never goes beyond 12px
+        const moveX = Math.min(Math.max(deltaX / 15, -12), 12); 
+        const moveY = Math.min(Math.max(deltaY / 15, -12), 12);
+
+        // 4. Update CSS Variables
+        petBody.style.setProperty('--eye-x', `${moveX}px`);
+        petBody.style.setProperty('--eye-y', `${moveY}px`);
+    });
 }
