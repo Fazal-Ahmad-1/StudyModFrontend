@@ -399,92 +399,344 @@ body.zen-active #active-subject {
 
 
 
-/* --- CYBER PET STYLES --- */
+/* =========================================
+   CYBER PET STYLES (EMOTION UPDATE)
+   ========================================= */
 
 .pet-container {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* The Core Orb */
-.orb {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #fff;
-    position: relative;
-    z-index: 2;
-    transition: 0.5s;
-}
-
-/* The Spinning Ring */
-.orb-ring {
-    position: absolute;
+/* --- The Pet Body (Base Shape) --- */
+.cyber-pet-body {
     width: 60px;
     height: 60px;
-    border: 2px solid transparent;
-    border-top-color: currentColor; /* Inherits color from parent */
-    border-bottom-color: currentColor;
-    border-radius: 50%;
-    animation: spin 4s linear infinite;
-    z-index: 1;
-    opacity: 0.5;
+    background: var(--bg-panel); /* Dark center */
+    border: 3px solid var(--neon-blue); /* Glowing edge */
+    /* Creates a organic "squaricle" shape */
+    border-radius: 35% 65% 60% 40% / 50% 50% 50% 50%;
+    position: relative;
+    z-index: 2;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: 
+        inset 0 0 15px rgba(0, 243, 255, 0.2),
+        0 0 10px rgba(0, 243, 255, 0.5);
 }
 
-/* --- ANIMATION STATES --- */
-
-/* 1. STABLE (Blue/Green - Default) */
-.pet-stable .orb {
+/* --- The Pet Eyes (Pseudo-elements) --- */
+/* --- The Pet Eyes (Pseudo-elements) --- */
+.cyber-pet-body::before,
+.cyber-pet-body::after {
+    content: '';
+    position: absolute;
+    
+    /* 1. USE VARIABLES FOR POSITIONING */
+    /* Base Top 35% + Vertical Movement */
+    top: calc(35% + var(--eye-y, 0px)); 
+    
+    width: 12px;
+    height: 14px;
     background: var(--neon-blue);
-    box-shadow: 0 0 20px var(--neon-blue), 0 0 60px var(--neon-blue);
-    animation: breathe 4s ease-in-out infinite;
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--neon-blue);
+    
+    /* We keep transition for smooth eye movement, 
+       but make it fast (0.1s) so it feels responsive */
+    transition: 
+        background 0.3s, 
+        box-shadow 0.3s, 
+        height 0.3s, 
+        border-radius 0.3s, 
+        top 0.1s, 
+        left 0.1s, 
+        right 0.1s; 
 }
-.pet-stable .orb-ring { color: var(--neon-blue); }
 
-/* 2. HYPER (Pink - High Productivity) */
-.pet-hyper .orb {
+/* 2. UPDATE LEFT/RIGHT POSITIONS */
+.cyber-pet-body::before { 
+    /* Left Eye: Base 20% + Horizontal Movement */
+    left: calc(20% + var(--eye-x, 0px)); 
+}
+
+.cyber-pet-body::after { 
+    /* Right Eye: Base 20% - Horizontal Movement (Minus because it's from the right) */
+    right: calc(20% - var(--eye-x, 0px)); 
+}
+
+/* --- Background Static Glow Ring --- */
+.pet-bg-glow {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 1px dashed var(--neon-blue);
+    opacity: 0.3;
+    z-index: 1;
+    animation: slow-spin 10s linear infinite;
+}
+
+/* =========================================
+   EMOTION STATES
+   ========================================= */
+
+/* --- STATE 1: STABLE (Happy/Calm - Blue) --- */
+.pet-stable .cyber-pet-body {
+    animation: pet-breathe-calm 4s ease-in-out infinite;
+}
+.pet-stable .cyber-pet-body::before,
+.pet-stable .cyber-pet-body::after {
+    animation: pet-blink 4s infinite;
+}
+
+/* --- STATE 2: HYPER (Excited/Crazy - Pink) --- */
+.pet-hyper .cyber-pet-body {
+    border-color: var(--neon-pink);
+    animation: pet-hyper-bounce 0.3s infinite alternate;
+    border-radius: 45%;
+    box-shadow: 0 0 30px var(--neon-pink);
+}
+.pet-hyper .cyber-pet-body::before,
+.pet-hyper .cyber-pet-body::after {
     background: var(--neon-pink);
-    box-shadow: 0 0 30px var(--neon-pink), 0 0 80px var(--neon-pink);
-    animation: bounce 0.5s infinite alternate; /* Fast energy! */
+    box-shadow: 0 0 20px var(--neon-pink);
+    height: 18px; /* Wide open eyes */
+    width: 14px;
+    animation: eye-wiggle 0.1s infinite;
 }
-.pet-hyper .orb-ring { 
-    color: var(--neon-pink); 
-    animation: spin 1s linear infinite; /* Fast spin */
-}
-
-/* 3. CRITICAL (Red - Inactive/Glitch) */
-.pet-critical .orb {
-    background: #ff3333;
-    box-shadow: 0 0 10px #ff3333;
-    animation: glitch-anim 2s infinite; /* Glitchy flicker */
-}
-.pet-critical .orb-ring {
-    color: #ff3333;
-    border-style: dashed;
+.pet-hyper .pet-bg-glow {
+    border-color: var(--neon-pink);
+    animation: slow-spin 2s linear infinite; /* Faster spin */
+    opacity: 0.6;
 }
 
-/* --- KEYFRAMES --- */
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-@keyframes breathe {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
+/* --- STATE 3: CRITICAL (Sad/Angry/Glitch - Red) --- */
+.pet-critical .cyber-pet-body {
+    border-color: var(--neon-red);
+    background: #1a0000;
+    border-radius: 10%; /* Sharp shape */
+    animation: pet-glitch-hard 0.2s infinite steps(5);
+    box-shadow: inset 0 0 20px var(--neon-red);
+}
+/* ANGRY SLIT EYES */
+.pet-critical .cyber-pet-body::before,
+.pet-critical .cyber-pet-body::after {
+    background: var(--neon-red);
+    box-shadow: 0 0 5px var(--neon-red);
+    height: 4px; /* Slits */
+    width: 16px;
+    top: 45%;
+    border-radius: 2px;
+}
+.pet-critical .cyber-pet-body::before { transform: rotate(15deg); }
+.pet-critical .cyber-pet-body::after { transform: rotate(-15deg); }
+.pet-critical .pet-bg-glow {
+    border-color: var(--neon-red);
+    border-style: dotted;
+    animation: none; opacity: 0.2;
 }
 
-@keyframes bounce {
-    from { transform: translateY(0); }
-    to { transform: translateY(-5px); }
+/* =========================================
+   KEYFRAMES
+   ========================================= */
+@keyframes slow-spin { 100% { transform: rotate(360deg); } }
+
+@keyframes pet-breathe-calm {
+    0%, 100% { transform: scale(1); border-radius: 35% 65% 60% 40% / 50% 50% 50% 50%; }
+    50% { transform: scale(1.05); border-radius: 40% 60% 55% 45% / 52% 48% 52% 48%; }
 }
 
-@keyframes glitch-anim {
-    0% { opacity: 1; transform: translate(0); }
-    10% { opacity: 0.8; transform: translate(-2px, 2px); }
-    20% { opacity: 1; transform: translate(2px, -2px); }
-    30% { opacity: 0.1; } /* Flicker out */
-    40% { opacity: 1; }
-    100% { opacity: 1; }
+@keyframes pet-blink {
+    0%, 45%, 55%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.1); }
+}
+
+@keyframes pet-hyper-bounce {
+    from { transform: translateY(0) scale(1.1, 0.9); }
+    to { transform: translateY(-5px) scale(0.9, 1.15); }
+}
+
+@keyframes eye-wiggle {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-2px, 1px); }
+    50% { transform: translate(1px, -2px); }
+    75% { transform: translate(2px, 2px); }
+    100% { transform: translate(0,0); }
+}
+
+@keyframes pet-glitch-hard {
+    0% { transform: translate(0) skew(0deg); opacity: 1; }
+    20% { transform: translate(-5px, 5px) skew(10deg); opacity: 0.8; }
+    40% { transform: translate(5px, -5px) skew(-10deg); }
+    60% { transform: translate(-2px, 0px); opacity: 0.4; }
+    80% { transform: translate(2px, 5px); opacity: 1; }
+    100% { transform: translate(0) skew(0deg); }
+}
+
+/* =========================================
+   PET RANDOM ACTIONS (ENGAGEMENT)
+   ========================================= */
+
+/* Action 1: WINK (One eye closes) */
+.action-wink .cyber-pet-body::after {
+    transform: scaleY(0.1) !important;
+    background: var(--neon-blue); /* Ensure visibility */
+}
+
+/* Action 2: SCAN (Eyes move left-right reading) */
+.action-scan .cyber-pet-body::before, 
+.action-scan .cyber-pet-body::after {
+    animation: pet-scan-eyes 1.5s ease-in-out infinite !important;
+    width: 14px; /* Slightly wider for scanning */
+    height: 6px; /* Narrower for focus */
+    border-radius: 2px;
+}
+
+/* Action 3: JUMP (A happy hop) */
+.action-jump .cyber-pet-body {
+    animation: pet-hop 0.6s ease-out !important;
+}
+
+/* Action 4: SURPRISE (Eyes go wide) */
+.action-surprise .cyber-pet-body {
+    transform: scale(1.1) !important;
+}
+.action-surprise .cyber-pet-body::before, 
+.action-surprise .cyber-pet-body::after {
+    height: 18px !important;
+    width: 18px !important;
+    background: #fff !important; /* White eyes */
+    box-shadow: 0 0 25px #fff !important;
+}
+
+/* --- ACTION KEYFRAMES --- */
+@keyframes pet-hop {
+    0% { transform: translateY(0) scale(1, 1); }
+    40% { transform: translateY(-20px) scale(0.9, 1.1); } /* Stretch up */
+    60% { transform: translateY(0) scale(1.1, 0.9); }     /* Squash down */
+    100% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes pet-scan-eyes {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* =========================================
+   GHOST MODE / HUD STYLES
+   ========================================= */
+
+/* The Container */
+#ghost-container {
+    margin-top: 20px;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid #333;
+    padding: 15px;
+    border-left: 4px solid var(--neon-blue); /* Sci-fi accent */
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+/* The Background Track */
+.ghost-track {
+    width: 100%;
+    height: 12px; /* Thicker for visibility */
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 2px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden; /* Clips the inner bar */
+    box-shadow: inset 0 0 5px #000;
+}
+
+/* The Active Player Bar (The Neon Part) */
+#player-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--neon-blue);
+    
+    /* 1. The Stripes Effect */
+    background-image: repeating-linear-gradient(
+        45deg,
+        var(--neon-blue) 0px,
+        var(--neon-blue) 10px,
+        rgba(0, 0, 0, 0.4) 10px, /* Dark stripe */
+        rgba(0, 0, 0, 0.4) 20px
+    );
+    background-size: 28px 28px; /* Size of the pattern */
+    
+    /* 2. The Neon Glow */
+    box-shadow: 
+        0 0 10px var(--neon-blue),
+        0 0 20px var(--neon-blue);
+    
+    /* 3. Animation: Move the stripes */
+    animation: bar-stripes-move 1s linear infinite;
+    
+    position: relative;
+    transition: width 0.5s linear; /* Smooth growth */
+}
+
+/* The "Leading Edge" (Bright White Tip) */
+#player-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: #fff; /* White hot intensity */
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+    z-index: 2;
+}
+
+/* The Status Text (Shining Text) */
+#ghost-status {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: bold;
+    
+    /* The Shine Gradient Background */
+    background: linear-gradient(
+        to right, 
+        #555 0%, 
+        var(--neon-blue) 40%, 
+        #fff 50%, 
+        var(--neon-blue) 60%, 
+        #555 100%
+    );
+    
+    background-size: 200% auto; /* Make background larger than text */
+    
+    /* Clip background to text */
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* Animate background position */
+    animation: text-shine 3s linear infinite;
+}
+
+/* --- ANIMATIONS --- */
+
+/* Moves the diagonal stripes inside the bar */
+@keyframes bar-stripes-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 28px 0; }
+}
+
+/* Moves the shine across the text */
+@keyframes text-shine {
+    to {
+        background-position: 200% center;
+    }
 }
