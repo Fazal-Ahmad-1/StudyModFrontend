@@ -54,9 +54,9 @@
                          </div>
     
                      <div class="pet-container">
-                      <div id="cyber-pet" class="orb"></div>
-                      <div class="orb-ring"></div>
-                     </div>
+                        <div class="pet-bg-glow"></div>
+                        <div id="cyber-pet" class="cyber-pet-body"></div>
+                    </div>
                     </div>
                     
                     <div class="card param-3d" id="main-control-card" >
@@ -69,12 +69,38 @@
                             <div class="input-group">
                                 <input type="text" id="tag" placeholder="Tag (e.g., Exam Prep)">
                             </div>
+                            <div class="input-group">
+                                <label style="color: #666; font-size: 0.8rem; margin-bottom: 5px; display:block;">GHOST PROTOCOL (OPPONENT)</label>
+                                <select id="ghost-mode-select" class="full-width" style="background: #121212; color: white; border: 1px solid #333; padding: 10px;">
+                                       <option value="NONE">-- No Ghost --</option>
+                                       <option value="LAST">Previous Session</option>
+                                      <option value="BEST">Personal Best</option>
+                                 </select>
+                            </div>
                             <button id="btn-start" class="btn btn-primary full-width">Initiate Sequence</button>
                         </div>
 
                         <div id="session-active" class="hidden">
                             <h3 id="active-subject" class="highlight-pink">PHYSICS</h3>
                             <div id="timer-display" class="digital-timer">00:00:00</div>
+                            <div id="ghost-container" class="hidden">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
+                                <span style="font-size: 0.7rem; color: #666; letter-spacing: 2px;">VS YOUR PAST</span>
+                                    <div id="ghost-status">CALIBRATING...</div>
+                            </div>
+
+                        <div class="ghost-track">
+                          <div id="ghost-bar" style="display: none;"></div>
+        
+                           <div id="player-bar"></div>
+                        </div>
+
+                      <div style="font-size: 0.7rem; color: #444; display: flex; justify-content: space-between; margin-top: 4px; font-family: var(--font-head);">
+                   <span>0%</span>
+                    <span>Deafeat your past</span>
+                   <span>100%</span>
+                     </div>
+                    </div>
                             <p class="tag-display">MODE: <span id="active-tag">FOCUS</span></p>
                             <div class="zen-controls" style="margin-bottom: 15px; text-align: center;">
                                 <button id="btn-zen-mode" class="btn btn-secondary btn-small">
